@@ -20,7 +20,7 @@ class TestingCanvasData(TestCase):
   def setUp(self):
     self.cd = CanvasData(
         API_KEY=API_KEY ,
-        API_SECRET=API_SECRET, 
+        API_SECRET=API_SECRET,
         base_folder = BASE_DIR,
         data_folder = DATA_BASE_DIR)
 
@@ -53,8 +53,8 @@ class TestingCanvasData(TestCase):
     tlist = self.cd.table_list()
     tlist.sort()
     self.assertEqual(base_keys, tlist)
-    self.assertEqual(len(tlist), 56)
-    self.assertEqual(len(base_keys), 56)
+    self.assertEqual(len(tlist), 65)
+    self.assertEqual(len(base_keys), 65)
 
 
   def test_print_schema(self):
@@ -66,7 +66,7 @@ class TestingImports(TestCase):
   def setUp(self):
     self.cd = CanvasData(
         API_KEY=API_KEY,
-        API_SECRET=API_SECRET, 
+        API_SECRET=API_SECRET,
         base_folder = BASE_DIR,
         data_folder = DATA_BASE_DIR)
 
@@ -84,7 +84,7 @@ class TestingImports(TestCase):
   def test_import_account(self):
     self.cd.import_data('account')
     self.assertTrue('account' in self.cd.table_list())
-        
+
   def test_import_assignment_dim(self):
     self.cd.import_data('assignment_dim')
     self.assertTrue('assignment_dim' in self.cd.table_list())
@@ -100,13 +100,13 @@ class TestingImports(TestCase):
 
 class TestReadConfig(TestCase):
   def setUp(self):
-    config_filename = os.path.join(BASE_DIR, 'config.ini') 
+    config_filename = os.path.join(BASE_DIR, 'config.ini')
     print('config_filename', config_filename)
     self.cd = CanvasData(config_filename=config_filename)
-        
+
 
   def test_read_valid_config_file(self):
-    config_filename = os.path.join(BASE_DIR, 'config.ini') 
+    config_filename = os.path.join(BASE_DIR, 'config.ini')
     self.assertTrue(os.path.exists(config_filename))
     conf, valid, errors = self.cd.config_valid(config_filename)
     self.assertTrue(valid)
@@ -114,7 +114,7 @@ class TestReadConfig(TestCase):
 
 
   def test_read_config_options(self):
-    config_filename = os.path.join(BASE_DIR, 'config.ini') 
+    config_filename = os.path.join(BASE_DIR, 'config.ini')
     self.cd.parse_config_file(config_filename)
 
     for rs in required_sections:
@@ -125,7 +125,7 @@ class TestReadConfig(TestCase):
         self.assertIsNotNone(self.cd._config.get(rs, option))
 
   def test_read_invalid_config_file(self):
-    config_filename = os.path.join(BASE_DIR, 'config_invalid.ini') 
+    config_filename = os.path.join(BASE_DIR, 'config_invalid.ini')
     self.assertTrue(os.path.exists(config_filename))
     config, valid, errors = self.cd.config_valid(config_filename)
     self.assertFalse(valid)
@@ -144,7 +144,7 @@ class TestCLI(TestCase):
 
   def setUp(self):
     # Remove all *.csv files from the test2 folder
-    self.config_filename = os.path.join(BASE_DIR, 'config.ini') 
+    self.config_filename = os.path.join(BASE_DIR, 'config.ini')
     self.cd = CanvasData(config_filename=self.config_filename)
     self.db_dir = self.cd._config.get('config','base_folder')
 
@@ -156,13 +156,13 @@ class TestCLI(TestCase):
   def test_cli_with_arguments_fails(self):
     has_error = False
     try:
-      script_output = subprocess.check_output(['canvasdata'], **{})  
+      script_output = subprocess.check_output(['canvasdata'], **{})
     except subprocess.CalledProcessError:
       has_error = True
     self.assertTrue(has_error)
 
   def test_cli_displays_help(self):
-    script_output = subprocess.check_output(['canvasdata','-h'], **{})  
+    script_output = subprocess.check_output(['canvasdata','-h'], **{})
     self.assertTrue(b'usage: canvasdata [-h] [--config CONFIG]' in script_output)
 
   def test_cli_convert_to_csv(self):
@@ -171,6 +171,6 @@ class TestCLI(TestCase):
 
     self.assertEqual(files_with_extension(self.cd.data_folder, 'csv'),[])
 
-    script_output = subprocess.check_output(cmd1)  
-    script_output = subprocess.check_output(cmd2)  
+    script_output = subprocess.check_output(cmd1)
+    script_output = subprocess.check_output(cmd2)
     self.assertNotEqual(files_with_extension(self.cd.data_folder, 'csv'),[])
